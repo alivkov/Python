@@ -7,6 +7,10 @@ def translate(w):
     w = w.lower()
     if w in data:
         return data[w]
+    elif w.title() in data:
+        return data[w.title()]
+    elif w.upper() in data:
+        return data[w.upper()]
     elif len(get_close_matches(w, data.keys())) > 0:
         yn = input("Did you mean %s instead? Y for yes and N for no: " % get_close_matches(w, data.keys())[0])
         if yn.lower() == "y":
@@ -18,11 +22,14 @@ def translate(w):
     else:
         return 'The word does not exist. Please check.'
 
-word = input('Enter a word:')
-output = translate(word)
-
-if type(output) == list:
-    for i in output:
-        print(i)
-else:
-    print(output)
+while True:
+    word = input('Enter a word:')
+    output = translate(word)
+    if word == "**q":
+        break
+    else:
+        if type(output) == list:
+            for i in output:
+                print(i)
+        else:
+            print(output)
