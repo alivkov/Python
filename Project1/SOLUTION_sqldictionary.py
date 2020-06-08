@@ -50,7 +50,7 @@ def user_input():
     while True:
         try:
             inp = input('Please enter a word for displaying the meaning or Press CTRL+D for EXIT: ')
-            if not isinstance(int(inp), str):
+            if not isinstance(inp, str):
                 raise ValueError
             results = dictionary_sql(inp)
         except ValueError:
