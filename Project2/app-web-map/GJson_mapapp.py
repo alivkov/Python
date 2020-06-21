@@ -33,3 +33,4 @@ map.add_child(folium.GeoJson(data=open('world.json', 'r', encoding='utf-8-sig').
 map.add_child(fgv)
 map.add_child(folium.LayerControl())
 map.save('map_html_GeoJson_colour.html')
+
