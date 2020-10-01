@@ -1,4 +1,5 @@
-import cv2, time, pandas
+import tkinter
+import cv2, pandas, PySimpleGUI as sg
 from datetime import datetime
 
 first_frame=None
@@ -6,12 +7,15 @@ status_list=[None,None]
 times=[]
 df=pandas.DataFrame(columns=["Start","End"])
 
-video=cv2.VideoCapture(0)
+#video=cv2.VideoCapture(1)
+USE_CAMERA = 1     # change to 1 for front facing camera
+window, cap = sg.Window('Demo Application - OpenCV Integration', [[sg.Image(filename='', key='image')], ], location=(0, 0), grab_anywhere=True), cv2.VideoCapture(USE_CAMERA)
 
-while True:
-    check, frame = video.read()
+while window(timeout=20)[0] != sg.WIN_CLOSED:
+    global frame
+    window['image'](frame = cap.read())
     status=0
-    gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    gray=cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray=cv2.GaussianBlur(gray,(21,21),0)
 
     if first_frame is None:
@@ -22,10 +26,10 @@ while True:
     thresh_frame=cv2.threshold(delta_frame, 30, 255, cv2.THRESH_BINARY)[1]
     thresh_frame=cv2.dilate(thresh_frame, None, iterations=2)
 
-    (_,cnts,_)=cv2.findContours(thresh_frame.copy(),cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    (cnts,_)=cv2.findContours(thresh_frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for contour in cnts:
-        if cv2.contourArea(contour) < 10000:
+        if cv2.contourArea(contour) < 20:
             continue
         status=1
 
@@ -42,17 +46,17 @@ while True:
         times.append(datetime.now())
 
 
-    cv2.imshow("Gray Frame",gray)
-    cv2.imshow("Delta Frame",delta_frame)
-    cv2.imshow("Threshold Frame",thresh_frame)
-    cv2.imshow("Color Frame",frame)
+#    cv2.imshow("Gray Frame",gray)
+#    cv2.imshow("Delta Frame",delta_frame)
+#    cv2.imshow("Threshold Frame",thresh_frame)
+#    sg.Window("Demo",["Color Frame",frame])
 
-    key=cv2.waitKey(1)
+#    key=cv2.waitKey(1)
 
-    if key==ord('q'):
-        if status==1:
-            times.append(datetime.now())
-        break
+#    if key==ord('q'):
+#        if status==1:
+#            times.append(datetime.now())
+#        break
 
 print(status_list)
 print(times)
@@ -62,5 +66,5 @@ for i in range(0,len(times),2):
 
 df.to_csv("Times.csv")
 
-video.release()
+cap.release()
 cv2.destroyAllWindows
