@@ -1,5 +1,6 @@
 import requests, pandas
 from bs4 import BeautifulSoup
+import pandas
 
 r = requests.get("http://www.pyclass.com/real-estate/rock-springs-wy/LCWYROCKSPRINGS/", headers={'User-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0'})
 
@@ -21,6 +22,7 @@ for item in all:
     except:
         d["Beds"]=None
     try:
+<<<<<<< HEAD
         d["Area"]=item.find("span", {"class":"infoSqFt"}).find("b").text
     except:
         d["Area"]=None
@@ -39,3 +41,25 @@ for item in all:
     l.append(d)
     df=pandas.DataFrame(l)
     df.to_csv("Output.csv")
+=======
+        d["Area"]=item.find("span", {"class":"infoSqft"}).find("b").text
+    except:
+        d["Area"]=None
+    try:
+        d["Full Baths"]=item.find("span", {"class":"infoValueFullBath"}).find("b").text
+    except:
+        d["Full Baths"]=None
+    try:
+        d["Half Baths"]=item.find("span", {"class":"infoValueHalfBath"}).find("b").text
+    except:
+        d["Half Baths"]=None
+
+    for column_group in item.find_all("div", {"class":"columnGroup"}):
+    	for feature_group, feature_name in zip(column_group.find_all("span",{"class":"featureGroup"}), column_group.find_all("span", {"class":"featureName"})):
+    		if "Lot Size" in feature_group.text:
+    			d["Lot Size"]=feature_name.text
+   		
+    l.append(d)
+df=pandas.DataFrame(l)
+df.to_csv("output.csv")
+>>>>>>> 8f9c9f15ae3d9dea75c092442ea2bc2b455c5f0b
